@@ -1,5 +1,5 @@
 import typer
-from .api import query_url, ask_web
+from .api import query_url, ask_web, read_pdf, query_arxiv
 
 app = typer.Typer(add_completion=False)
 
@@ -23,6 +23,26 @@ def ask(question: str):
     """
     typer.echo(f"🔎 Searching the web for: '{question}'...")
     result = ask_web(question)
+    typer.echo("\n--- Final Context Pack ---\n")
+    typer.echo(result.context)
+
+@app.command()
+def pdf(path_or_url: str):
+    """
+    Extract context from a local PDF or remote PDF URL.
+    """
+    typer.echo(f"📄 Extracting PDF from: {path_or_url}...")
+    result = read_pdf(path_or_url)
+    typer.echo("\n--- Final Context Pack ---\n")
+    typer.echo(result.context)
+
+@app.command()
+def arxiv(id_or_query: str):
+    """
+    Fetch an arXiv paper by ID or search query and extract context.
+    """
+    typer.echo(f"📚 Querying arXiv for: '{id_or_query}'...")
+    result = query_arxiv(id_or_query)
     typer.echo("\n--- Final Context Pack ---\n")
     typer.echo(result.context)
 

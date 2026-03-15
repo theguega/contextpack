@@ -7,6 +7,9 @@ from .scraper import fetch_and_scrape
 from .chunker import split_into_chunks
 from .ranker import rank_chunks
 from .formatter import format_context_pack
+from .pdf import extract_pdf_text
+from .arxiv import fetch_arxiv_data
+import os
 
 def query_url(url: str, max_depth: int = 2, max_pages: int = 10) -> ContextPackResult:
     """
@@ -38,6 +41,67 @@ def query_url(url: str, max_depth: int = 2, max_pages: int = 10) -> ContextPackR
         query=f"Documentation for {url}",
         sources=sources,
         chunks=top_chunks,
+        context=""
+    )
+    result.context = format_context_pack(result)
+    return result
+
+def read_pdf(path_or_url: str) -> ContextPackResult:
+    """
+    Extracts text from a local PDF or a remote PDF URL.
+    """
+    text = extract_pdf_text(path_or_url)
+
+    parsed = urlparse(path_or_url)
+    domain = parsed.netloc if parsed.scheme in ("http", "https") else "local"
+    url = path_or_url if parsed.scheme in ("http", "https") else f"file://{os.path.abspath(path_or_url)}"
+
+    source = ContextSource(url=url, domain=domain, title=os.path.basename(path_or_url))
+    chunks = split_into_chunks(text)
+
+    context_chunks = [ContextChunk(text=c, source_url=url) for c in chunks]
+
+    result = ContextPackResult(
+        query=f"PDF extraction for {path_or_url}",
+        sources=[source],
+        chunks=context_chunks,
+        context=""
+    )
+    result.context = format_context_pack(result)
+    return result
+
+def query_arxiv(id_or_query: str) -> ContextPackResult:
+    """
+    Fetches an arXiv paper by ID or search query and extracts its content.
+    """
+    data = fetch_arxiv_data(id_or_query)
+    if not data:
+        # Fallback empty result
+        result = ContextPackResult(query=id_or_query, sources=[], chunks=[], context="No arXiv results found.")
+        result.context = format_context_pack(result)
+        return result
+
+    pdf_url = data.get("pdf_url")
+    if not pdf_url:
+        result = ContextPackResult(query=id_or_query, sources=[], chunks=[], context="arXiv entry found but no PDF linked.")
+        result.context = format_context_pack(result)
+        return result
+
+    text = extract_pdf_text(pdf_url)
+
+    source = ContextSource(url=data["entry_id"], domain="arxiv.org", title=data["title"])
+    chunks = split_into_chunks(text)
+
+    context_chunks = [ContextChunk(text=c, source_url=data["entry_id"]) for c in chunks]
+
+    # We might want to inject the title and summary into the first chunk or metadata, but for now just add them
+    summary_chunk = ContextChunk(text=f"Title: {data['title']}\n\nAbstract: {data['summary']}", source_url=data["entry_id"])
+    context_chunks.insert(0, summary_chunk)
+
+    result = ContextPackResult(
+        query=f"arXiv query for {id_or_query}",
+        sources=[source],
+        chunks=context_chunks,
         context=""
     )
     result.context = format_context_pack(result)
