@@ -1,7 +1,6 @@
 # 📦 contextpack-md
 
 <p align="center">
-  <a href="https://github.com/theguega/contextpack-md/actions/workflows/release.yml"><img src="https://github.com/theguega/contextpack-md/actions/workflows/release.yml/badge.svg" alt="Release Status"></a>
   <a href="https://theguega.github.io/contextpack-md/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg" alt="Documentation"></a>
   <a href="https://pypi.org/project/contextpack-md/"><img src="https://img.shields.io/pypi/v/contextpack-md.svg" alt="PyPI version"></a>
   <a href="https://github.com/theguega/contextpack-md/blob/main/LICENSE"><img src="https://img.shields.io/github/license/theguega/contextpack-md.svg" alt="License"></a>
@@ -15,10 +14,10 @@ Extract clean, LLM-ready Markdown from any URL in seconds.
 
 ```bash
 # Using uv (recommended)
-uvx contextpack-md web https://docs.python.org/3/
+uvx contextpack-md https://docs.python.org/3/
 
-# Download and convert PDF
-uvx contextpack-md pdf https://arxiv.org/pdf/1706.03762.pdf
+# Download a PDF and convert to Markdown (extra deps)
+uvx --with "contextpack-md[pdf]" contextpack-md pdf https://arxiv.org/pdf/1706.03762.pdf
 ```
 
 ## ✨ Key Features
@@ -35,6 +34,16 @@ pip install contextpack-md
 
 # For PDF support (requires PyTorch)
 pip install "contextpack-md[pdf]"
+```
+
+Or install the binary and add it to your path :
+
+```bash
+# without pdf feature
+uv tool install contextpack-md
+
+# With pdf feature (extra deps)
+uv tool install contextpack-md --with "contextpack-md[pdf]"
 ```
 
 ## 📖 Documentation
