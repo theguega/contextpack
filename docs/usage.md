@@ -4,12 +4,12 @@
 
 ## CLI Usage
 
-### Basic Extraction
+### Basic Extraction (assuming you downloaded the cli)
 
 Extract content from a URL directly to your terminal.
 
 ```bash
-uvx contextpack-md web https://docs.python.org/3/
+contextpack-md web https://docs.python.org/3/
 ```
 
 ### Save to Cache
@@ -17,7 +17,7 @@ uvx contextpack-md web https://docs.python.org/3/
 Store the output in `~/.contextpack-md/` with a timestamped name.
 
 ```bash
-uvx contextpack-md web https://docs.python.org/3/ --write
+contextpack-md web https://docs.python.org/3/ --write
 ```
 
 ### PDF to Markdown
@@ -25,7 +25,7 @@ uvx contextpack-md web https://docs.python.org/3/ --write
 Download and convert a PDF. This requires `marker-pdf` (automatically installed if using the `pdf` extra).
 
 ```bash
-uvx contextpack-md pdf https://arxiv.org/pdf/1706.03762.pdf
+contextpack-md pdf https://arxiv.org/pdf/1706.03762.pdf
 ```
 
 ### Clearing the Cache
@@ -33,7 +33,7 @@ uvx contextpack-md pdf https://arxiv.org/pdf/1706.03762.pdf
 Remove all stored content in `~/.contextpack-md/`.
 
 ```bash
-uvx contextpack-md clear
+contextpack-md clear
 ```
 
 ---
